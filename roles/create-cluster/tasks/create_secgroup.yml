@@ -1,0 +1,15 @@
+# Create master security group
+  - name: Create master security group
+    local_action:
+      module: cs_securitygroup
+      name: "{{ cluster_security_group_name }}-master"
+      description: Security group for the {{ cluster_name }} cluster (masters)
+    tags: sg
+
+# Create worker security group
+  - name: Create worker security group
+    local_action:
+      module: cs_securitygroup
+      name: "{{ cluster_security_group_name }}-worker"
+      description: Security group for the {{ cluster_name }} cluster (workers)
+    tags: sg

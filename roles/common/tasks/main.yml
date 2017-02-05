@@ -1,0 +1,2 @@
+---
+  - include: get_cloudstack_ini.yml

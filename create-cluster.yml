@@ -1,0 +1,44 @@
+---
+
+# Create the cloud master vms
+- hosts: localhost
+  connection: local
+  vars:
+    # Constants
+    exo_zone: CH-GVA-2
+    exo_template: Linux Ubuntu 16.04 LTS 64-bit 10G Disk (2016-10-20-85bb6c)
+    exo_instance_type: Small
+    # Parameters
+    nb_nodes: 3
+  roles:
+    - create-cluster
+    - create-context
+
+# Setup the cluster components
+- hosts: all
+  vars:
+    java_version: 8
+    # Hadoop
+    hadoop_version: 2.7.3
+    hadoop_user: hadoop
+    hadoop_group: "{{ hadoop_user }}"
+    hadoop_distribution: "hadoop-{{ hadoop_version }}"
+    hadoop_mirror_url: "http://mirror.switch.ch/mirror/apache/dist/hadoop/common/{{ hadoop_distribution }}"
+    hadoop_install_dir: "/usr/local/lib"
+    hadoop_home_dir: "/usr/local/hadoop"
+    #
+
+    # Spark
+    spark_version: 2.1.0
+    spark_user: spark
+    spark_group: "{{ spark_user }}"
+    spark_distribution: "spark-{{ spark_version }}-bin-hadoop2.7"
+    spark_mirror_url: "http://d3kbcqa49mib13.cloudfront.net"
+    spark_install_dir: "/usr/local/lib"
+    spark_home_dir: "/usr/local/spark"
+    #
+    spark_master_port: 7077
+    spark_master_ui_port: 8080
+  become: true
+  roles:
+    - setup-cluster

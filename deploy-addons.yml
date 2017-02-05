@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    addons: [ glusterfs, exo_storage ]
+  roles:
+    - common
+    - deploy-addons

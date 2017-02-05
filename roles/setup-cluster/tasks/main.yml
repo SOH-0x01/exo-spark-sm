@@ -1,0 +1,4 @@
+---
+  - include: setup_base.yml
+  - include: setup_hadoop.yml
+  - include: setup_spark.yml

@@ -1,0 +1,68 @@
+# Zookeeper service
+- name: start zookeeper
+  service:
+    name: zookeeper
+    state: started
+    enabled: yes
+  tags: zoo
+
+- name: stop zookeeper
+  service:
+    name: zookeeper
+    state: stopped
+    enabled: yes
+  tags: zoo
+
+- name: retart zookeeper
+  service:
+    name: zookeeper
+    state: restarted
+    enabled: yes
+  tags: zoo
+
+# Spark service (master)
+- name: start spark-master
+  service:
+    name: spark-master
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  tags: spark
+
+- name: stop spark-master
+  service:
+    name: spark-master
+    state: stopped
+    enabled: no
+    tags: spark
+
+- name: restart spark-master
+  service:
+    name: spark-master
+    state: restarted
+    enabled: yes
+  tags: spark
+
+# Spark service (worker)
+- name: start spark-worker
+  service:
+    name: spark-worker
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  tags: spark
+
+- name: stop spark-worker
+  service:
+    name: spark-worker
+    state: stopped
+    enabled: no
+  tags: spark
+
+- name: restart spark-worker
+  service:
+    name: spark-worker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  tags: spark

@@ -1,0 +1,6 @@
+# Get cloudstack ini information as facts
+- set_fact: EXO_API_KEY="{{ lookup('ini', 'key section=cloudstack file=./cloudstack.ini') }}"
+
+- set_fact: EXO_API_SECRET="{{ lookup('ini', 'secret section=cloudstack file=./cloudstack.ini') }}"
+
+- set_fact: EXO_API_ENDPOINT="{{ lookup('ini', 'endpoint section=cloudstack file=./cloudstack.ini') }}"

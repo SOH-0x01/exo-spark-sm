@@ -1,0 +1,99 @@
+# Create hadoop user and group
+- name: Create hadoop group
+  group:
+    name: "{{ hadoop_group }}"
+    state: present
+  tags: hadoop
+
+- name: Create hadoop user
+  user:
+    name: hadoop
+    group: "{{ hadoop_user }}"
+    shell: "/bin/bash"
+    state: present
+  tags: hadoop
+
+# Create hadoop directories
+- name: Create hadoop directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  with_items:
+    - "{{ hadoop_install_dir }}"
+    - "/etc/hadoop"
+  tags: hadoop
+
+# Download and install hadoop
+- name: Download hadoop binaries
+  get_url:
+    url: "{{ hadoop_mirror_url }}/{{ hadoop_distribution }}.tar.gz"
+    dest: "/tmp/"
+  tags: hadoop
+
+- name: Unarchive hadoop to the install directory
+  unarchive:
+    src: "/tmp/{{ hadoop_distribution }}.tar.gz"
+    dest: "{{ hadoop_install_dir }}"
+    remote_src: yes
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  tags: hadoop
+
+- name: Create hadoop symlinks
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}", dest: "{{ hadoop_home_dir }}" }
+    - { src: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop", dest: "/etc/hadoop/conf" }
+  tags: hadoop
+
+# Set haddoop environment
+- name: Set spark envirronment
+  template:
+    src: templates/hadoop-profile.j2
+    dest: /etc/profile.d/hadoop.sh
+    owner: root
+    group: root
+    mode: 0644
+  tags: hadoop
+
+# Setup hadoop configuration
+- name: Deploy hadoop hadoop-env.sh configuration
+  template:
+    src: "templates/hadoop-env.j2"
+    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/hadoop-env.sh"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  tags: hadoop
+
+- name: Deploy hadoop core-site.xml configuration
+  template:
+    src: templates/hadoop-core-site.j2
+    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/core-site.xml"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  tags: hadoop
+
+- name: Deploy hadoop core-site.xml configuration
+  template:
+    src: "templates/hadoop-hdfs-site.j2"
+    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/hdfs-site.xml"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  tags: hadoop
+
+#- name: Clean hadoop example and template configuration
+#  file:
+#    path: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/{{ item }}"
+#    state: deleted
+#  with_items:
+#    - "*.template"
+#    - "*.example"
+#  tags: hadoop
+
+# Register and start the spark service
+# TODO

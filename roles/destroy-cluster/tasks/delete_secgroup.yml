@@ -1,0 +1,15 @@
+# Delete master security group
+  - name: Delete master security group
+    local_action:
+      module: cs_securitygroup
+      name: "{{ cluster_security_group_name }}-master"
+      state: absent
+    tags: sg
+
+# Delete worker security group
+  - name: Delete worker security group
+    local_action:
+      module: cs_securitygroup
+      name: "{{ cluster_security_group_name }}-worker"
+      state: absent
+    tags: sg

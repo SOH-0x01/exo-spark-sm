@@ -1,0 +1,109 @@
+# Create spark user and group
+- name: Create spark group
+  group:
+    name: "{{ spark_group }}"
+    state: present
+  tags: spark
+
+- name: Create spark user
+  user:
+    name: spark
+    group: "{{ spark_user }}"
+    shell: "/bin/bash"
+    state: present
+  tags: spark
+
+# Create spark directories
+- name: Create spark directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  with_items:
+    - "{{ spark_install_dir }}"
+    - "/etc/spark"
+  tags: spark
+
+# Download and install spark
+- name: Download spark binaries
+  get_url:
+    url: "{{ spark_mirror_url }}/{{ spark_distribution }}.tgz"
+    dest: "/tmp/"
+  tags: sprak
+
+- name: Unarchive spark to the install directory
+  unarchive:
+    src: "/tmp/{{ spark_distribution }}.tgz"
+    dest: "{{ spark_install_dir }}"
+    remote_src: yes
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  tags: spark
+
+- name: Create spark symlinks
+  file: src="{{ item.src }}"
+        dest="{{ item.dest }}"
+        state=link
+  with_items:
+    - { src: "{{ spark_install_dir }}/{{ spark_distribution }}", dest: "{{ spark_home_dir }}" }
+    - { src: "{{ spark_install_dir }}/{{ spark_distribution }}/conf", dest: "/etc/spark/conf" }
+  tags: spark
+
+# Set spark environment
+- name: Set spark envirronment
+  template:
+    src: templates/spark-profile.j2
+    dest: /etc/profile.d/spark.sh
+    owner: root
+    group: root
+    mode: 0644
+  tags: spark
+
+# Setup spark configuration
+- name: Deploy spark topology configuration
+  template:
+    src: templates/spark-{{ item }}.j2
+    dest: "{{ spark_install_dir }}/{{ spark_distribution }}/conf/{{ item }}"
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  with_items:
+    - masters
+    - slaves
+  tags: spark
+
+- name: Deploy spark spark-env.sh configuration
+  template:
+    src: "templates/spark-env.j2"
+    dest: "{{ spark_install_dir }}/{{ spark_distribution }}/conf/spark-env.sh"
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  tags: spark
+
+- name: Deploy spark spark-default.sh configuration
+  template:
+    src: "templates/spark-defaults.j2"
+    dest: "{{ spark_install_dir }}/{{ spark_distribution }}/conf/spark-defaults.conf"
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+  tags: spark
+
+#- name: Clean spark example and template configuration
+#  file:
+#    path: "{{ spark_install_dir }}/{{ spark_distribution }}/etc/hadoop/{{ item }}"
+#    state: deleted
+#  with_items:
+#    - "*.template"
+#    - "*.example"
+#  tags: spark
+
+# Register and start the spark service
+- name: Deploy master systemd start scripts
+  template:
+    src: "spark-systemd.j2"
+    dest: "/etc/systemd/system/spark-master.service"
+    owner: root
+    group: root
+  notify:
+    - restart spark-master
+  tags: spark

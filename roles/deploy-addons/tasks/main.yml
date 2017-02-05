@@ -1,0 +1,3 @@
+---
+  - include: {{items}}.yml
+    with_items: {{ addons }}

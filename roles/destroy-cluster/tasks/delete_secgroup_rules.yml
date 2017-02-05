@@ -1,0 +1,26 @@
+#### Master Security Groups rules ####
+
+  - name: Create cluster SSH for remote access
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 22
+      end_port: 22
+      state: absent
+    tags: sgr
+
+# Master Spark rules
+
+
+#### Worker Security Groups rules #####
+
+  - name: Create cluster SSH for remote access
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name}}-worker"
+      start_port: 22
+      end_port: 22
+      state: absent
+    tags: sgr
+
+# Worker Spark rules

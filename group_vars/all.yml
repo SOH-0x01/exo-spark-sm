@@ -1,0 +1,8 @@
+# Global variables
+cluster_name: stark
+cluster_env: PROD
+cluster_prefix: datsci-exo
+cluster_init_nb_nodes: 3
+cluster_ssh_key: datsci-exo-kp
+cluster_ssh_cidr: 0.0.0.0/0
+cluster_security_group_name: datsci-exo-sg-stark
