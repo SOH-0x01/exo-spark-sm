@@ -48,4 +48,5 @@ Marc Guillen (marc.guillen@datsci.farm)
 
 Licence
 =======
+APACHE
 Click on the [Link](LICENSE) to see the full text.
