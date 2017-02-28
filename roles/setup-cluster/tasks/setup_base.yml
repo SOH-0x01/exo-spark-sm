@@ -19,6 +19,15 @@
     - net.ipv6.conf.lo.disable_ipv6
   tags: ipv6
 
+- name: Add reference in /etc/hosts
+  template:
+    src: "etc-hosts.j2"
+    dest: "/etc/hosts"
+    owner: root
+    group: root
+    mode: 644
+  tags: std
+
 # Install java ecosystem and related
 - name: Install Java and Maven
   apt:

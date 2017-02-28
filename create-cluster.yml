@@ -1,6 +1,6 @@
 ---
 
-# Create the cloud master vms
+# Create the cloud vms
 - hosts: localhost
   connection: local
   vars:
@@ -10,6 +10,11 @@
     exo_instance_type: Small
     # Parameters
     nb_nodes: 3
+  post_tasks:
+    - name: Wait for the ssh to be up
+      become: false
+      local_action: wait_for host="{{ hostvars[item].ansible_host }}" port=22 timeout=90 delay=30
+      with_items: "{{ groups['all'] }}"
   roles:
     - create-cluster
     - create-context
@@ -26,7 +31,6 @@
     hadoop_mirror_url: "http://mirror.switch.ch/mirror/apache/dist/hadoop/common/{{ hadoop_distribution }}"
     hadoop_install_dir: "/usr/local/lib"
     hadoop_home_dir: "/usr/local/hadoop"
-    #
 
     # Spark
     spark_version: 2.1.0

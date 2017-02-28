@@ -1,12 +1,22 @@
 #### Master Security Groups rules ####
 
+  - name: Create cluster SSH for remote access (cidr)
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 22
+      end_port: 22
+      cidr: 0.0.0.0/0
+    tags: sgr
+
   - name: Create cluster SSH for remote access
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name }}-master"
       start_port: 22
       end_port: 22
-      cidr: "{{ cluster_ssh_cidr }}"
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_ssh_group_names }}"
     tags: sgr
 
 # Master Spark rules
@@ -14,13 +24,23 @@
 
 #### Worker Security Groups rules #####
 
-  - name: Create cluster SSH for remote access
+  - name: Create cluster SSH for remote access (cidr)
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}-worker"
       start_port: 22
       end_port: 22
-      cidr: "{{ cluster_ssh_cidr }}"
+      cidr: 0.0.0.0/0
+    tags: sgr
+
+  - name: Create cluster SSH for remote access
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 22
+      end_port: 22
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_ssh_group_names }}"
     tags: sgr
 
 # Worker spark rules
