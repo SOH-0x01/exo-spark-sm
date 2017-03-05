@@ -7,7 +7,7 @@
     # Constants
     exo_zone: CH-GVA-2
     exo_template: Linux Ubuntu 16.04 LTS 64-bit 10G Disk (2016-10-20-85bb6c)
-    exo_instance_type: Small
+    exo_instance_type: Medium
     # Parameters
     nb_nodes: 3
   post_tasks:
@@ -22,8 +22,9 @@
 # Setup the cluster components
 - hosts: all
   vars:
+    ## Java
     java_version: 8
-    # Hadoop
+    ## Hadoop
     hadoop_version: 2.7.3
     hadoop_user: hadoop
     hadoop_group: "{{ hadoop_user }}"
@@ -31,8 +32,8 @@
     hadoop_mirror_url: "http://mirror.switch.ch/mirror/apache/dist/hadoop/common/{{ hadoop_distribution }}"
     hadoop_install_dir: "/usr/local/lib"
     hadoop_home_dir: "/usr/local/hadoop"
-
-    # Spark
+    #hadoop_env_vars:
+    ## Spark
     spark_version: 2.1.0
     spark_user: spark
     spark_group: "{{ spark_user }}"
@@ -40,9 +41,31 @@
     spark_mirror_url: "http://d3kbcqa49mib13.cloudfront.net"
     spark_install_dir: "/usr/local/lib"
     spark_home_dir: "/usr/local/spark"
-    #
+    spark_working_dir: "/var/lib/spark"
     spark_master_port: 7077
     spark_master_ui_port: 8080
+    spark_worker_port: 7078
+    spark_worker_ui_port: 8081
+    #spark_env_vars:
   become: true
   roles:
     - setup-cluster
+
+# Start the services
+- hosts: masters
+  tasks:
+    - name: start spark-master
+      service:
+        name: spark-master
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+- hosts: workers
+  tasks:
+    - name: start spark-worker
+      service:
+        name: spark-worker
+        state: started
+        enabled: yes
+        daemon_reload: yes

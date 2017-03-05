@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Set Hadoop-specific environment variables here.
+# The only required environment variable is JAVA_HOME.
+
+# The java implementation to use.
+export JAVA_HOME=/usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/
+
+# Additional option that can be set at the cluster creation
+# Use the dic spark_env_vars
+{% if hadoop_env_vars is defined %}
+{% for key, value in hadoop_env_vars.iteritems() %}
+export {{key}}={{value}}
+{% endfor %}
+{% endif %}

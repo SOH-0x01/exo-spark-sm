@@ -6,5 +6,5 @@ cluster_init_nb_nodes: 3
 cluster_ssh_key: datsci-exo-kp
 cluster_security_group_name: datsci-exo-sg-stark
 # Cluster access
-cluster_ssh_group_names: [default]
-cluster_service_group_names: [default]
+cluster_ssh_group_names: [datsci-exo-sg-stark-master,datsci-exo-sg-stark-worker,default]
+cluster_service_group_names: [datsci-exo-sg-stark-master,datsci-exo-sg-stark-worker,default]

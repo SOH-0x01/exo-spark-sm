@@ -1,8 +1,4 @@
-export HADOOP_HOME={{spark_install_dir}}/hadoop
+export JAVA_HOME=/usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/
+export HADOOP_HOME={{hadoop_home_dir}}
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export PATH=$PATH:$HADOOP_HOME/bin
-{% if hadoop_env_vars is defined %}
-{% for key, value in hadoop_env_vars.iteritems() %}
-export {{key}}={{value}}
-{% endfor %}
-{% endif %}

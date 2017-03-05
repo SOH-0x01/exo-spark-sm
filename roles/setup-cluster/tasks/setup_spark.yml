@@ -23,6 +23,7 @@
     group: "{{ spark_group }}"
   with_items:
     - "{{ spark_install_dir }}"
+    - "{{ spark_working_dir }}"
     - "/etc/spark"
   tags: spark
 

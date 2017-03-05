@@ -1,7 +1,4 @@
-export SPARK_HOME={{spark_install_dir}}/spark
+export JAVA_HOME=/usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/
+export SPARK_CONF_DIR=etc/spark/conf
+export SPARK_HOME={{spark_home_dir}}
 export PATH=$PATH:$SPARK_HOME/bin
-{% if spark_env_vars is defined %}
-{% for key, value in spark_env_vars.iteritems() %}
-export {{key}}={{value}}
-{% endfor %}
-{% endif %}

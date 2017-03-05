@@ -19,12 +19,62 @@
     with_items: "{{ cluster_ssh_group_names }}"
     tags: sgr
 
+# Hadoop HDFS Namenode
+  - name: Create hadoop namenode TCP 50070
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 50070
+      end_port: 50070
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+# Hadoop HDFS Backup/checkpoints
+  - name: reate hadoop backup/checpoints TCP 50105
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 50105
+      end_port: 50105
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
 # Master Spark rules
 
+  - name: Create spark master TCP tule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 7077
+      end_port: 7077
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+  - name: Create spark master UI TCP tule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 8080
+      end_port: 8080
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+  - name: Create spark master UI TCP tule (cidr)
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 8080
+      end_port: 8080
+      cidr: 0.0.0.0/0
+    tags: sgr
 
 #### Worker Security Groups rules #####
 
-  - name: Create cluster SSH for remote access (cidr)
+  - name: Create spark SSH for remote access (cidr)
     local_action:
       module: cs_securitygroup_rule
       security_group: "{{ cluster_security_group_name}}-worker"
@@ -33,14 +83,65 @@
       cidr: 0.0.0.0/0
     tags: sgr
 
-  - name: Create cluster SSH for remote access
+  - name: Create spark SSH for remote access
     local_action:
       module: cs_securitygroup_rule
-      security_group: "{{ cluster_security_group_name }}-master"
+      security_group: "{{ cluster_security_group_name }}-worker"
       start_port: 22
       end_port: 22
       user_security_group: "{{ item }}"
     with_items: "{{ cluster_ssh_group_names }}"
     tags: sgr
 
+# Hadoop HDFS Datanode
+  - name: Create hadoop datanode TCP 50070
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-worker"
+      start_port: 50075
+      end_port: 50075
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+# Hadoop HDFS Backup/checkpoints
+  - name: reate hadoop backup/checpoints TCP 50105
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-worker"
+      start_port: 50105
+      end_port: 50105
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
 # Worker spark rules
+
+  - name: Create spark worker TCP tule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-worker"
+      start_port: 7078
+      end_port: 7078
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+  - name: Create spark worker UI TCP tule
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-worker"
+      start_port: 8081
+      end_port: 8081
+      user_security_group: "{{ item }}"
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+  - name: Create spark worker UI TCP tule (cidr)
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-worker"
+      start_port: 8081
+      end_port: 8081
+      cidr: 0.0.0.0/0
+    tags: sgr

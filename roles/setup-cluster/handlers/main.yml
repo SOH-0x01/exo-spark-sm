@@ -1,24 +1,24 @@
-# Zookeeper service
-- name: start zookeeper
+# HDFS service
+- name: start hdfs
   service:
-    name: zookeeper
+    name: hdfs
     state: started
     enabled: yes
-  tags: zoo
+  tags: hdfs
 
-- name: stop zookeeper
+- name: stop hdfs
   service:
-    name: zookeeper
+    name: hdfs
     state: stopped
     enabled: yes
-  tags: zoo
+  tags: hdfs
 
-- name: retart zookeeper
+- name: retart hdfs
   service:
-    name: zookeeper
+    name: hdfs
     state: restarted
     enabled: yes
-  tags: zoo
+  tags: hdfs
 
 # Spark service (master)
 - name: start spark-master
