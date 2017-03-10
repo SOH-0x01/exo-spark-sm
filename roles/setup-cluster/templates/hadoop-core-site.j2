@@ -13,4 +13,9 @@
     <name>fs.default.name</name>
     <value>hdfs://{{ cluster_prefix }}-{{ cluster_name }}-master:54310</value>
   </property>
+
+  <property>
+  <name>hadoop.tmp.dir</name>
+    <value>/var/tmp/hadoop</value>
+  </property>
 </configuration>

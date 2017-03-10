@@ -1,0 +1,5 @@
+- name: Ensure secret directory is deleted
+  file:
+    path: ./secret/
+    state: absent
+  tags: ssh-keygen

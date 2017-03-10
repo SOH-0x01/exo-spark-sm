@@ -14,6 +14,21 @@
     state: present
   tags: hadoop
 
+- name: Deploy hadoop sudoers inlcude
+  template:
+    src: "hadoop-users-sudo.j2"
+    dest: "/etc/sudoers.d/XX-hadoop-users"
+    owner: root
+    group: root
+    mode: 440
+  tags: hadoop
+
+- name: Set authorized public key for hadoop
+  authorized_key:
+    user: hadoop
+    state: present
+    key: "{{ lookup('file', './secret/hadoop/hadoop.pem.pub') }}"
+
 # Create hadoop directories
 - name: Create hadoop directories
   file:
@@ -24,6 +39,9 @@
   with_items:
     - "{{ hadoop_install_dir }}"
     - "/etc/hadoop"
+    - "/var/tmp/hadoop"
+    - "/var/log/hadoop"
+    - "/dfs/data"
   tags: hadoop
 
 # Download and install hadoop

@@ -25,6 +25,8 @@
     - "{{ spark_install_dir }}"
     - "{{ spark_working_dir }}"
     - "/etc/spark"
+    - "/var/tmp/spark"
+    - "/var/log/spark"
   tags: spark
 
 # Download and install spark

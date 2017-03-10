@@ -1,3 +1,13 @@
-spark.local.dir	              /tmp
-spark.worker.cleanup.enabled  true
-spark.worker.cleanup.interval	1800
+
+spark.master                      spark://{{ cluster_prefix }}-{{ cluster_name }}-master:7077
+spark.serializer                  org.apache.spark.serializer.KryoSerializer
+spark.eventLog.enabled            true
+spark.local.dir                   /tmp
+
+spark.driver.cores                1
+spark.driver.memory               1g
+spark.driver.extraLibraryPath     {{ hadoop_home_dir }}/lib/native/
+spark.driver.extraClassPath       {{ hadoop_home_dir }}/etc/hadoop/conf
+
+spark.executor.extraLibraryPath   {{ hadoop_home_dir }}/lib/native/
+spark.executor.extraClassPath     {{ hadoop_home_dir }}/etc/hadoop/conf

@@ -19,6 +19,14 @@
     - create-cluster
     - create-context
 
+# Generate ssh key pair for the hadoop user
+- hosts: localhost
+  connection: local
+  vars:
+    keypair_name: hadoop
+  roles:
+    - generate-keypair
+
 # Setup the cluster components
 - hosts: all
   vars:

@@ -1,0 +1,12 @@
+
+- name: Ensure secret directory is created
+  file:
+    path: ./secret/{{ keypair_name }}/
+    state: directory
+  tags: ssh-keygen
+
+- name: Create the key pairs
+  shell: 'ssh-keygen -b 2048 -t rsa -f ./secret/{{ keypair_name }}/{{ keypair_name }}.pem -q -N ""'
+  args:
+    creates: ./secret/{{ keypair_name }}/{{ keypair_name }}.pem
+  tags: ssh-keygen
