@@ -22,6 +22,18 @@
     tags: sgr
 
 # Hadoop HDFS Namenode
+  - name: Create hadoop namenode TCP 9000
+    local_action:
+      module: cs_securitygroup_rule
+      security_group: "{{ cluster_security_group_name }}-master"
+      start_port: 9000
+      end_port: 9000
+      user_security_group: "{{ item }}"
+      state: absent
+    with_items: "{{ cluster_service_group_names }}"
+    tags: sgr
+
+# Hadoop HDFS Namenode
   - name: Create hadoop namenode TCP 50070
     local_action:
       module: cs_securitygroup_rule

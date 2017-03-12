@@ -6,7 +6,7 @@ After=network.target network-online.target
 [Service]
 Type=forking
 User={{ spark_user }}
-WorkingDirectory={{ spark_working_dir }}
+WorkingDirectory=/usr/lib/spar
 ExecStart={{ spark_home_dir }}/sbin/start-slave.sh spark://{{ groups["masters"] | join(":{0},".format(spark_master_port)) }}:{{ spark_master_port }}
 ExecStop={{ spark_home_dir }}/sbin/stop-slave.sh
 Restart=on-abort

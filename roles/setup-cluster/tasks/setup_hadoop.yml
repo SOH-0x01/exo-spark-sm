@@ -20,7 +20,16 @@
     dest: "/etc/sudoers.d/XX-hadoop-users"
     owner: root
     group: root
-    mode: 440
+    mode: 0440
+  tags: hadoop
+
+- name: Deploy private key
+  copy:
+    src: ./secret/hadoop/hadoop.pem
+    dest: /home/{{ hadoop_user }}/.ssh/hadoop.pem
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: 0600
   tags: hadoop
 
 - name: Set authorized public key for hadoop
@@ -28,6 +37,13 @@
     user: hadoop
     state: present
     key: "{{ lookup('file', './secret/hadoop/hadoop.pem.pub') }}"
+  tags: hadoop
+
+- name: Create ssh config
+  template:
+    src: hadoop-ssh-config.j2
+    dest: /home/{{ hadoop_user }}/.ssh/config
+  tags: hadoop
 
 # Create hadoop directories
 - name: Create hadoop directories
@@ -80,7 +96,25 @@
     mode: 0644
   tags: hadoop
 
+# Format HDFS
+#- name: Format hdfs (unless it's already been done)
+#  command: "hadoop namenode -format"
+#  args:
+#    creates: "{{ hadoop_install_dir }}/ansible-format-hdfs-DONE"
+#  tags: hadoop
+
 # Setup hadoop configuration
+- name: Deploy hadoop topology configuration
+  template:
+    src: templates/hadoop-{{ item }}.j2
+    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/{{ item }}"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  with_items:
+    - masters
+    - slaves
+  tags: hadoop
+
 - name: Deploy hadoop hadoop-env.sh configuration
   template:
     src: "templates/hadoop-env.j2"
@@ -97,7 +131,7 @@
     group: "{{ hadoop_group }}"
   tags: hadoop
 
-- name: Deploy hadoop hdfs.xml configuration
+- name: Deploy hadoop hdfs-site.xml configuration
   template:
     src: "templates/hadoop-hdfs-site.j2"
     dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/hdfs-site.xml"
@@ -114,13 +148,11 @@
     - "*.example"
   tags: hadoop
 
-# Register and start the hadoop service
+# Register the hadoop service
 - name: Deploy hadoop hdfs systemd scripts
   template:
     src: "hadoop-hdfs-systemd.j2"
-    dest: "/etc/systemd/system/hadoop-hdfs.service"
+    dest: "/etc/systemd/system/hadoop-dfs.service"
     owner: root
     group: root
-#  notify:
-#    - restart hadoop-hdfs
   tags: hadoop

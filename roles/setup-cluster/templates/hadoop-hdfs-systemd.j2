@@ -9,7 +9,7 @@ Type=forking
 User={{ hadoop_user }}
 WorkingDirectory={{ hadoop_home_dir }}
 ExecStart={{ hadoop_home_dir }}/sbin/start-dfs.sh
-ExecStop={{ hadoop_home_dir }}bin/stop-dfs.sh
+ExecStop={{ hadoop_home_dir }}/sbin/stop-dfs.sh
 Restart=on-abort
 
 [Install]

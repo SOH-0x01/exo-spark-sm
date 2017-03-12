@@ -23,10 +23,10 @@
     group: "{{ spark_group }}"
   with_items:
     - "{{ spark_install_dir }}"
-    - "{{ spark_working_dir }}"
     - "/etc/spark"
     - "/var/tmp/spark"
     - "/var/log/spark"
+    - "/var/lib/spark"
   tags: spark
 
 # Download and install spark
@@ -102,7 +102,7 @@
     - "*.example"
   tags: spark
 
-# Register and start the spark service
+# Register the spark service
 - name: Deploy spark systemd scripts
   template:
     src: "spark-master-systemd.j2"

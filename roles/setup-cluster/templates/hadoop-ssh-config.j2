@@ -1,0 +1,14 @@
+Host 0.0.0.0
+IdentityFile ~/.ssh/hadoop.pem
+StrictHostKeyChecking no
+
+Host localhost
+IdentityFile ~/.ssh/hadoop.pem
+StrictHostKeyChecking no
+
+{% for host in groups['all'] %}
+Host {{ hostvars[host].ansible_hostname }}
+# User ubuntu
+IdentityFile ~/.ssh/hadoop.pem
+StrictHostKeyChecking no
+{% endfor %}
