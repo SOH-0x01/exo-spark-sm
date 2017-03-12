@@ -23,6 +23,23 @@
     mode: 0440
   tags: hadoop
 
+# Create hadoop directories
+- name: Create hadoop directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+  with_items:
+    - "/home/{{ hadoop_user }}/.ssh"
+    - "{{ hadoop_install_dir }}"
+    - "/etc/hadoop"
+    - "/var/tmp/hadoop"
+    - "/var/log/hadoop"
+    - "/dfs/data"
+  tags: hadoop
+
+# Setup ssh passwordless for hadoop
 - name: Deploy private key
   copy:
     src: ./secret/hadoop/hadoop.pem
@@ -43,21 +60,6 @@
   template:
     src: hadoop-ssh-config.j2
     dest: /home/{{ hadoop_user }}/.ssh/config
-  tags: hadoop
-
-# Create hadoop directories
-- name: Create hadoop directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ hadoop_user }}"
-    group: "{{ hadoop_group }}"
-  with_items:
-    - "{{ hadoop_install_dir }}"
-    - "/etc/hadoop"
-    - "/var/tmp/hadoop"
-    - "/var/log/hadoop"
-    - "/dfs/data"
   tags: hadoop
 
 # Download and install hadoop
@@ -96,13 +98,6 @@
     mode: 0644
   tags: hadoop
 
-# Format HDFS
-#- name: Format hdfs (unless it's already been done)
-#  command: "hadoop namenode -format"
-#  args:
-#    creates: "{{ hadoop_install_dir }}/ansible-format-hdfs-DONE"
-#  tags: hadoop
-
 # Setup hadoop configuration
 - name: Deploy hadoop topology configuration
   template:
@@ -123,20 +118,17 @@
     group: "{{ hadoop_group }}"
   tags: hadoop
 
-- name: Deploy hadoop core-site.xml configuration
+- name: Deploy hadoop *-site.xml configuration
   template:
-    src: templates/hadoop-core-site.j2
-    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/core-site.xml"
+    src: templates/hadoop-{{ item }}-site.j2
+    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/{{ item }}-site.xml"
     owner: "{{ hadoop_user }}"
     group: "{{ hadoop_group }}"
-  tags: hadoop
-
-- name: Deploy hadoop hdfs-site.xml configuration
-  template:
-    src: "templates/hadoop-hdfs-site.j2"
-    dest: "{{ hadoop_install_dir }}/{{ hadoop_distribution }}/etc/hadoop/hdfs-site.xml"
-    owner: "{{ hadoop_user }}"
-    group: "{{ hadoop_group }}"
+  with_items:
+    - core
+    - hdfs
+    - mapred
+    - yarn
   tags: hadoop
 
 - name: Clean up hadoop example and template configuration
@@ -148,11 +140,14 @@
     - "*.example"
   tags: hadoop
 
-# Register the hadoop service
-- name: Deploy hadoop hdfs systemd scripts
+# Register the hadoop services
+- name: Deploy hadoop systemd scripts
   template:
-    src: "hadoop-hdfs-systemd.j2"
-    dest: "/etc/systemd/system/hadoop-dfs.service"
+    src: "hadoop-{{ item }}-systemd.j2"
+    dest: "/etc/systemd/system/hadoop-{{ item }}.service"
     owner: root
     group: root
+  with_items:
+    - dfs
+    - yarn
   tags: hadoop

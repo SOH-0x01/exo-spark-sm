@@ -30,7 +30,7 @@
     with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
-# Hadoop HDFS Namenode
+# Hadoop HDFS UI Namenode
   - name: Create hadoop namenode TCP 50070
     local_action:
       module: cs_securitygroup_rule
@@ -41,16 +41,6 @@
     with_items: "{{ cluster_service_group_names }}"
     tags: sgr
 
-# Hadoop HDFS Backup/checkpoints
-  - name: reate hadoop backup/checpoints TCP 50105
-    local_action:
-      module: cs_securitygroup_rule
-      security_group: "{{ cluster_security_group_name }}-master"
-      start_port: 50105
-      end_port: 50105
-      user_security_group: "{{ item }}"
-    with_items: "{{ cluster_service_group_names }}"
-    tags: sgr
 
 # Master Spark rules
 

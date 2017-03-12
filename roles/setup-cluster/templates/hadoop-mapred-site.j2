@@ -6,15 +6,8 @@
 <configuration>
 
   <property>
-    <name>fs.default.name</name>
-    <value>hdfs://{{ cluster_prefix }}-{{ cluster_name }}-master:9000</value>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
   </property>
-
-  <!--
-  <property>
-  <name>hadoop.tmp.dir</name>
-    <value>/var/tmp/hadoop</value>
-  </property>
-  -->
-
+  
 </configuration>

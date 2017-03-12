@@ -61,9 +61,17 @@
 # Start the services
 - hosts: masters
   tasks:
+    - name: format hdfs (unless it's already been done)
+      shell: "hadoop namenode -format"
     - name: start hadoop-dfs
       service:
         name: hadoop-dfs
+        state: started
+        enabled: yes
+        daemon_reload: yes
+    - name: start hadoop-yarn
+      service:
+        name: hadoop-yarn
         state: started
         enabled: yes
         daemon_reload: yes

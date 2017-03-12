@@ -4,17 +4,8 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-
-  <property>
-    <name>fs.default.name</name>
-    <value>hdfs://{{ cluster_prefix }}-{{ cluster_name }}-master:9000</value>
   </property>
-
-  <!--
-  <property>
-  <name>hadoop.tmp.dir</name>
-    <value>/var/tmp/hadoop</value>
+    <name>hive.execution.engine</name>
+    <value>spark</value>
   </property>
-  -->
-
 </configuration>
